@@ -62,7 +62,7 @@ func (m JWTAuthMiddleware) Handler() gin.HandlerFunc {
 			return
 		}
 
-		m.httpService.HTTPResponse(c, http.StatusUnauthorized, resources.AccessDenied)
+		m.httpService.HTTPError(c, http.StatusUnauthorized, resources.AccessDenied)
 		c.Abort()
 	}
 }

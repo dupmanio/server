@@ -51,6 +51,10 @@ func newLogger(environment string) Logger {
 		config = zap.NewDevelopmentConfig()
 	}
 
+	if environment == "test" {
+		config.Level = zap.NewAtomicLevelAt(zap.ErrorLevel)
+	}
+
 	config.Encoding = "console"
 	config.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
 	config.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder

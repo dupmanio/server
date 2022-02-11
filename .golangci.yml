@@ -38,7 +38,7 @@ linters:
 
 issues:
   exclude:
-    - Module|globalLogger|zapLogger is a global variable
+    - Module|globalLogger|zapLogger|testerSetup is a global variable
     - LogMode returns interface
     - Function 'LogEvent' is too long
     - calculated cyclomatic complexity for function LogEvent is

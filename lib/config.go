@@ -12,6 +12,9 @@
 package lib
 
 import (
+	"path"
+	"path/filepath"
+	"runtime"
 	"time"
 
 	"github.com/mcuadros/go-defaults"
@@ -59,9 +62,14 @@ type Config struct {
 
 // NewConfig creates a new Config.
 func NewConfig() (conf Config) {
+	configPath := "."
+	if _, b, _, ok := runtime.Caller(0); ok {
+		configPath = filepath.Dir(path.Join(path.Dir(b)))
+	}
+
 	viper.SetConfigName(".env")
 	viper.SetConfigType("env")
-	viper.AddConfigPath(".")
+	viper.AddConfigPath(configPath)
 	viper.AllowEmptyEnv(true)
 	viper.AutomaticEnv()
 

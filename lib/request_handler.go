@@ -30,6 +30,10 @@ func NewRequestHandler(config Config, logger Logger) RequestHandler {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
+	if config.Env == "test" {
+		gin.SetMode(gin.TestMode)
+	}
+
 	engine := gin.New()
 
 	if err := engine.SetTrustedProxies(config.Server.TrustedProxies); err != nil {
