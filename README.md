@@ -1,11 +1,24 @@
-# server
+<p align="center">
+    <img width="600px" src="./.assets/logo.png" />
+</p>
 
-dupman server written in Go
+<h1 align="center">dupman/server</h1>
 
-[![GitHub go.mod Go version of a Go module](https://img.shields.io/github/go-mod/go-version/dupman/server.svg)](https://github.com/dupman/server)
-[![Lint and Test](https://github.com/dupman/server/actions/workflows/lint-and-test.yml/badge.svg)](https://github.com/dupman/server/actions/workflows/lint-and-test.yml)
-[![codecov](https://codecov.io/gh/dupman/server/branch/main/graph/badge.svg?token=5A88MBXGTU)](https://codecov.io/gh/dupman/server)
-[![Go Report Card](https://goreportcard.com/badge/github.com/gotify/server)](https://goreportcard.com/report/github.com/gotify/server)
+
+<p align="center">
+    <a href="https://github.com/dupman/server">
+        <img alt="GitHub go.mod Go version of a Go module" src="https://img.shields.io/github/go-mod/go-version/dupman/server.svg">
+    </a>
+    <a href="https://github.com/dupman/server/actions/workflows/lint-and-test.yml">
+        <img alt="Lint and Test" src="https://github.com/dupman/server/actions/workflows/lint-and-test.yml/badge.svg">
+    </a>
+    <a href="https://codecov.io/gh/dupman/server">
+        <img alt="codecov" src="https://codecov.io/gh/dupman/server/branch/main/graph/badge.svg?token=5A88MBXGTU">
+    </a>
+    <a href="https://goreportcard.com/report/github.com/gotify/server">
+        <img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/gotify/server">
+    </a>
+</p>
 
 ## Requirements
 
