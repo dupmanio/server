@@ -1,0 +1,81 @@
+name: Lint and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+
+      - uses: golangci/golangci-lint-action@v2
+        with:
+          version: latest
+
+  test:
+    runs-on: ubuntu-latest
+    needs: [ lint ]
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: dupman
+          POSTGRES_PASSWORD: dupman
+          POSTGRES_DB: dupman_db
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Generate JWT Keys
+        run: |
+          openssl genrsa -out keys/jwt.pem 2048
+          openssl rsa -in keys/jwt.pem -outform PEM -pubout -out keys/jwt.pub
+
+      - run: cp .env.example .env
+
+      - name: Run Tests
+        run: go test ./... -race -coverprofile=coverage.out -covermode=atomic
+        env:
+          ENV: test
+          DB_HOST: localhost
+          DB_USER: dupman
+          DB_PASSWORD: dupman
+          DB_NAME: dupman_db
+          DB_PORT: 5432
+          JWT_PRIVATE_KEY_LOCATION: ${{ github.workspace }}/keys/jwt.pem
+          JWT_PUBLIC_KEY_LOCATION: ${{ github.workspace }}/keys/jwt.pub
+          CORS_ORIGINS: "*"
+          CORS_METHODS: "GET,POST,PUT,HEAD,OPTIONS,DELETE"
+          CORS_HEADERS: "*"
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.out
+          fail_ci_if_error: true
+          verbose: true

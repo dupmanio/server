@@ -31,8 +31,6 @@ type AuthControllerSuite struct {
 }
 
 func TestAuthControllerSuite(t *testing.T) {
-	t.Parallel()
-
 	helper.BootstrapSuite(t, new(AuthControllerSuite))
 }
 

@@ -35,6 +35,7 @@ linters:
     - interfacer
     - exhaustivestruct
     - wrapcheck
+    - paralleltest
 
 issues:
   exclude:
