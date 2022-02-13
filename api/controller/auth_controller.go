@@ -13,6 +13,7 @@ package controller
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/dupman/server/dto"
 	"github.com/dupman/server/model"
@@ -48,52 +49,86 @@ func NewAuthController(
 //
 // ---
 // parameters:
-// - name: body
-//   in: body
-//   description: login payload
+// - name: grant_type
+//   in: formData
+//   description: Grant Type
+//   type: string
+// - name: username
+//   in: formData
+//   description: Username
 //   required: true
-//   schema:
-//     $ref: "#/definitions/UserLogin"
+//   type: string
+// - name: password
+//   in: formData
+//   description: Password
+//   required: true
+//   type: string
+// - name: scope
+//   in: formData
+//   description: Scope
+//   type: string
+// - name: client_id
+//   in: formData
+//   description: Client ID
+//   type: string
+// - name: client_secret
+//   in: formData
+//   description: Client Secret
+//   type: string
+//
+// Consumes:
+// - application/x-www-form-urlencoded
 //
 // responses:
 //   200:
 //     description: Ok
 //     schema:
-//         $ref: "#/definitions/JWTResponse"
+//         $ref: "#/definitions/OAuthResponse"
 //   400:
 //     description: Bad Request
 //     schema:
-//         $ref: "#/definitions/HTTPError"
+//         $ref: "#/definitions/OAuthError"
 //   401:
 //     description: Unauthorized
 //     schema:
-//         $ref: "#/definitions/HTTPError"
+//         $ref: "#/definitions/OAuthError"
 func (a AuthController) Token(c *gin.Context) {
 	var credentials *dto.UserLogin
 
 	if err := c.ShouldBind(&credentials); err != nil {
-		a.httpService.HTTPValidationError(c, err)
+		c.JSON(http.StatusBadRequest, dto.OAuthError{
+			Error:            dto.OAuthInvalidRequest,
+			ErrorDescription: strings.Join(a.httpService.NormalizeHTTPValidationError(err), "\n"),
+		})
 
 		return
 	}
 
-	// @todo: implement error
 	user, err := a.userService.GetUserByUsernameOrEmail(credentials.Username)
 	if err != nil {
-		a.httpService.HTTPError(c, http.StatusUnauthorized, resources.InvalidCredentials)
+		c.JSON(http.StatusUnauthorized, dto.OAuthError{
+			Error:            dto.OAuthInvalidGrant,
+			ErrorDescription: resources.InvalidCredentials,
+		})
 
 		return
 	}
 
 	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(credentials.Password)); err != nil {
-		a.httpService.HTTPError(c, http.StatusUnauthorized, resources.InvalidCredentials)
+		c.JSON(http.StatusUnauthorized, dto.OAuthError{
+			Error:            dto.OAuthInvalidGrant,
+			ErrorDescription: resources.InvalidCredentials,
+		})
 
 		return
 	}
 
 	token, err := a.authService.GenerateToken(&user)
 	if err != nil {
-		a.httpService.HTTPError(c, http.StatusUnauthorized, resources.UnableToCreateToken)
+		c.JSON(http.StatusUnauthorized, dto.OAuthError{
+			Error:            dto.OAuthInvalidGrant,
+			ErrorDescription: resources.UnableToCreateToken,
+		})
 
 		return
 	}

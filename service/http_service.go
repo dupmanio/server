@@ -42,14 +42,17 @@ func (s HTTPService) HTTPResponse(c *gin.Context, code int, data interface{}) {
 
 // HTTPValidationError sends HTTP validation response.
 func (s HTTPService) HTTPValidationError(c *gin.Context, err error) {
+	s.HTTPError(c, http.StatusBadRequest, s.NormalizeHTTPValidationError(err))
+}
+
+// NormalizeHTTPValidationError Normalizes the HTTP validation error.
+func (s HTTPService) NormalizeHTTPValidationError(err error) []string {
 	var validationErr validator.ValidationErrors
 	if errors.As(err, &validationErr) {
-		s.HTTPError(c, http.StatusBadRequest, s.formatValidationErrors(validationErr))
-
-		return
+		return s.formatValidationErrors(validationErr)
 	}
 
-	s.HTTPError(c, http.StatusBadRequest, err.Error())
+	return []string{err.Error()}
 }
 
 func (s HTTPService) formatValidationErrors(validationErrors validator.ValidationErrors) (errors []string) {

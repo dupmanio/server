@@ -70,7 +70,7 @@ func (s JWTAuthService) Authorize(tokenString string) (user model.User, err erro
 }
 
 // GenerateToken creates jwt auth token.
-func (s JWTAuthService) GenerateToken(user *model.User) (response dto.JWTResponse, err error) {
+func (s JWTAuthService) GenerateToken(user *model.User) (response dto.OAuthResponse, err error) {
 	now := time.Now()
 	expiry := now.Add(s.config.Expiration)
 

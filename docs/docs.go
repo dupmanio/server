@@ -20,7 +20,6 @@
 // OAuth2PasswordBearer:
 //   type: oauth2
 //   tokenUrl: /auth/token
-//   in: header
 //   flow: password
 //
 // swagger:meta

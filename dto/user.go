@@ -62,19 +62,13 @@ type UserAccount struct {
 }
 
 // UserLogin represents user login payload.
-// swagger:model UserLogin
 type UserLogin struct {
-	// Username or email
-	//
-	// required: true
-	// example: j_doe@dup.man
-	Username string `json:"username" binding:"required"`
-
-	// User password
-	//
-	// required: true
-	// example: pa$$w0rd
-	Password string `json:"password" binding:"required"`
+	GrantType    string `form:"grant_type"`
+	Username     string `form:"username" binding:"required"`
+	Password     string `form:"password" binding:"required"`
+	Scope        string `form:"scope"`
+	ClientID     string `form:"client_id"`
+	ClientSecret string `form:"client_secret"`
 }
 
 // UserRegister represents registration login payload.

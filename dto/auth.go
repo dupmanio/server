@@ -23,9 +23,9 @@ var (
 	errTokenUsedBeforeIssued = errors.New("token used before issued")
 )
 
-// JWTResponse represents JWT token data.
-// swagger:model JWTResponse
-type JWTResponse struct {
+// OAuthResponse represents JWT token data.
+// swagger:model OAuthResponse
+type OAuthResponse struct {
 	// JWT Access Token
 	//
 	// required: true
@@ -43,6 +43,22 @@ type JWTResponse struct {
 	// required: true
 	// example: 3600
 	ExpiresIn int64 `json:"expires_in"`
+}
+
+// OAuthError represents oauth error.
+// swagger:model OAuthError
+type OAuthError struct {
+	// OAuth error code
+	//
+	// required: true
+	// example: invalid_request
+	Error string `json:"error"`
+
+	// OAuth error description
+	ErrorDescription string `json:"error_description,omitempty"`
+
+	// OAuth error URI
+	ErrorURI string `json:"error_uri,omitempty"`
 }
 
 // JWTClaims represents JWT token claim.
@@ -65,3 +81,12 @@ func (c JWTClaims) Valid() (err error) {
 
 	return err
 }
+
+const (
+	OAuthInvalidRequest              = "invalid_request"
+	OAuthInvalidClient               = "invalid_client"
+	OAuthInvalidGrant                = "invalid_grant"
+	OAuthInvalidScope                = "invalid_scope"
+	OAuthUnauthorizedClient          = "unauthorized_client"
+	OAuthInvalidUnsupportedGrantType = "unsupported_grant_type"
+)

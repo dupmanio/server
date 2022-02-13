@@ -36,7 +36,27 @@ definitions:
     title: HTTPResponse represents HTTP response data.
     type: object
     x-go-package: github.com/dupman/server/dto
-  JWTResponse:
+  OAuthError:
+    properties:
+      error:
+        description: OAuth error code
+        example: invalid_request
+        type: string
+        x-go-name: Error
+      error_description:
+        description: OAuth error description
+        type: string
+        x-go-name: ErrorDescription
+      error_uri:
+        description: OAuth error URI
+        type: string
+        x-go-name: ErrorUri
+    required:
+    - error
+    title: OAuthError represents oauth error.
+    type: object
+    x-go-package: github.com/dupman/server/dto
+  OAuthResponse:
     properties:
       access_token:
         description: JWT Access Token
@@ -58,7 +78,7 @@ definitions:
     - access_token
     - token_type
     - expires_in
-    title: JWTResponse represents JWT token data.
+    title: OAuthResponse represents JWT token data.
     type: object
     x-go-package: github.com/dupman/server/dto
   UUID:
@@ -116,24 +136,6 @@ definitions:
     - lastName
     - email
     title: UserAccount represents user accounts data.
-    type: object
-    x-go-package: github.com/dupman/server/dto
-  UserLogin:
-    properties:
-      password:
-        description: User password
-        example: pa$$w0rd
-        type: string
-        x-go-name: Password
-      username:
-        description: Username or email
-        example: j_doe@dup.man
-        type: string
-        x-go-name: Username
-    required:
-    - username
-    - password
-    title: UserLogin represents user login payload.
     type: object
     x-go-package: github.com/dupman/server/dto
   UserRegister:
@@ -199,7 +201,7 @@ paths:
           schema:
             $ref: '#/definitions/HTTPError'
       security:
-      - OAuth2PasswordBearer: null
+      - OAuth2PasswordBearer: []
       summary: Get current authenticated user.
       tags:
       - Account
@@ -227,27 +229,49 @@ paths:
       - Auth
   /auth/token:
     post:
+      consumes:
+      - application/x-www-form-urlencoded
       operationId: token
       parameters:
-      - description: login payload
-        in: body
-        name: body
+      - description: Grant Type
+        in: formData
+        name: grant_type
+        type: string
+      - description: Username
+        in: formData
+        name: username
         required: true
-        schema:
-          $ref: '#/definitions/UserLogin'
+        type: string
+      - description: Password
+        in: formData
+        name: password
+        required: true
+        type: string
+      - description: Scope
+        in: formData
+        name: scope
+        type: string
+      - description: Client ID
+        in: formData
+        name: client_id
+        type: string
+      - description: Client Secret
+        in: formData
+        name: client_secret
+        type: string
       responses:
         "200":
           description: Ok
           schema:
-            $ref: '#/definitions/JWTResponse'
+            $ref: '#/definitions/OAuthResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/HTTPError'
+            $ref: '#/definitions/OAuthError'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/HTTPError'
+            $ref: '#/definitions/OAuthError'
       summary: Authenticate User.
       tags:
       - Auth
@@ -259,7 +283,6 @@ schemes:
 securityDefinitions:
   OAuth2PasswordBearer:
     flow: password
-    in: header
     tokenUrl: /auth/token
     type: oauth2
 swagger: "2.0"

@@ -42,7 +42,7 @@ func NewAccountController(userService service.UserService) AccountController {
 //
 // ---
 // Security:
-// - OAuth2PasswordBearer:
+// - OAuth2PasswordBearer: []
 //
 // responses:
 //   200:
