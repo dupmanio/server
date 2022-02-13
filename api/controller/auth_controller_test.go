@@ -15,6 +15,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/dupman/server/dto"
 	"github.com/dupman/server/resources"
 	"github.com/dupman/server/test/helper"
 	"github.com/dupman/server/test/seeder"
@@ -90,51 +91,51 @@ func (s *AuthControllerSuite) Test_Register_success() {
 }
 
 func (s *AuthControllerSuite) Test_Login_emptyRequestBody() {
-	res := s.e.POST("/auth/login").
+	res := s.e.POST("/auth/token").
 		WithJSON(gin.H{}).
 		Expect()
 
 	res.Status(http.StatusBadRequest)
-	res.JSON().Object().ValueEqual("code", http.StatusBadRequest)
-	res.JSON().Object().ContainsKey("error")
+	res.JSON().Object().ValueEqual("error", dto.OAuthInvalidRequest)
+	res.JSON().Object().ContainsKey("error_description")
 }
 
 func (s *AuthControllerSuite) Test_Login_userNotFound() {
-	res := s.e.POST("/auth/login").
+	res := s.e.POST("/auth/token").
 		WithJSON(gin.H{"username": "unknown_user", "password": "password"}).
 		Expect()
 
 	res.Status(http.StatusUnauthorized)
-	res.JSON().Object().ValueEqual("code", http.StatusUnauthorized)
-	res.JSON().Object().ValueEqual("error", resources.InvalidCredentials)
+	res.JSON().Object().ValueEqual("error", dto.OAuthInvalidGrant)
+	res.JSON().Object().ValueEqual("error_description", resources.InvalidCredentials)
 }
 
 func (s *AuthControllerSuite) Test_Login_passwordIsIncorrect() {
-	res := s.e.POST("/auth/login").
+	res := s.e.POST("/auth/token").
 		WithJSON(gin.H{"username": "user_1", "password": "wrong_password"}).
 		Expect()
 
 	res.Status(http.StatusUnauthorized)
-	res.JSON().Object().ValueEqual("code", http.StatusUnauthorized)
-	res.JSON().Object().ValueEqual("error", resources.InvalidCredentials)
+	res.JSON().Object().ValueEqual("error", dto.OAuthInvalidGrant)
+	res.JSON().Object().ValueEqual("error_description", resources.InvalidCredentials)
 }
 
 func (s *AuthControllerSuite) Test_Login_successWithUsername() {
-	res := s.e.POST("/auth/login").
+	res := s.e.POST("/auth/token").
 		WithJSON(gin.H{"username": "user_1", "password": "password"}).
 		Expect()
 
 	res.Status(http.StatusOK)
-	res.JSON().Object().ValueEqual("code", http.StatusOK)
-	res.JSON().Object().Value("data").Object().ContainsKey("token")
+	res.JSON().Object().ContainsKey("access_token")
+	res.JSON().Object().ValueEqual("token_type", "Bearer")
 }
 
 func (s *AuthControllerSuite) Test_Login_successWithEmail() {
-	res := s.e.POST("/auth/login").
+	res := s.e.POST("/auth/token").
 		WithJSON(gin.H{"username": "user1@dup.man", "password": "password"}).
 		Expect()
 
 	res.Status(http.StatusOK)
-	res.JSON().Object().ValueEqual("code", http.StatusOK)
-	res.JSON().Object().Value("data").Object().ContainsKey("token")
+	res.JSON().Object().ContainsKey("access_token")
+	res.JSON().Object().ValueEqual("token_type", "Bearer")
 }

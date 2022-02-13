@@ -68,11 +68,11 @@ func (s *AccountControllerSuite) Test_Login_invalidToken() {
 }
 
 func (s *AccountControllerSuite) Test_Login_success() {
-	res := s.e.POST("/auth/login").
+	res := s.e.POST("/auth/token").
 		WithJSON(gin.H{"username": "user_1", "password": "password"}).
 		Expect()
 
-	authToken := res.JSON().Object().Value("data").Object().Value("token").String().Raw()
+	authToken := res.JSON().Object().Value("access_token").String().Raw()
 
 	res = s.e.GET("/account").
 		WithHeader("Authorization", fmt.Sprintf("Bearer %s", authToken)).
