@@ -1,0 +1,265 @@
+basePath: /
+consumes:
+- application/json
+definitions:
+  HTTPError:
+    properties:
+      code:
+        description: HTTP status code
+        format: int64
+        type: integer
+        x-go-name: Code
+      error:
+        description: HTTP error body
+        type: object
+        x-go-name: Error
+    required:
+    - code
+    - error
+    title: HTTPError represents HTTP error data.
+    type: object
+    x-go-package: github.com/dupman/server/dto
+  HTTPResponse:
+    properties:
+      code:
+        description: HTTP status code
+        format: int64
+        type: integer
+        x-go-name: Code
+      data:
+        description: HTTP response body
+        type: object
+        x-go-name: Data
+    required:
+    - code
+    - data
+    title: HTTPResponse represents HTTP response data.
+    type: object
+    x-go-package: github.com/dupman/server/dto
+  JWTResponse:
+    properties:
+      access_token:
+        description: JWT Access Token
+        example: eyJhbGciOiJSUz...dAlCslnO3YqiCA
+        type: string
+        x-go-name: AccessToken
+      expires_in:
+        description: JWT Token Expires In
+        example: 3600
+        format: int64
+        type: integer
+        x-go-name: ExpiresIn
+      token_type:
+        description: JWT Token Type
+        example: Bearer
+        type: string
+        x-go-name: TokenType
+    required:
+    - access_token
+    - token_type
+    - expires_in
+    title: JWTResponse represents JWT token data.
+    type: object
+    x-go-package: github.com/dupman/server/dto
+  UUID:
+    description: |-
+      A UUID is a 128 bit (16 byte) Universal Unique IDentifier as defined in RFC
+      4122.
+    items:
+      format: uint8
+      type: integer
+    type: array
+    x-go-package: github.com/google/uuid
+  UserAccount:
+    properties:
+      createdAt:
+        description: User creation date and time
+        format: date-time
+        type: string
+        x-go-name: CreatedAt
+      email:
+        description: User Email
+        example: j_doe@dup.man
+        type: string
+        x-go-name: Email
+      firstName:
+        description: User First Name
+        example: John
+        type: string
+        x-go-name: FirstName
+      id:
+        description: User ID
+        format: uuid
+        type: string
+        x-go-name: ID
+      lastName:
+        description: User Last Name
+        example: Doe
+        type: string
+        x-go-name: LastName
+      updatedAt:
+        description: User update date and time
+        format: date-time
+        type: string
+        x-go-name: UpdatedAt
+      username:
+        description: Username
+        example: j_doe
+        type: string
+        x-go-name: Username
+    required:
+    - id
+    - createdAt
+    - updatedAt
+    - username
+    - firstName
+    - lastName
+    - email
+    title: UserAccount represents user accounts data.
+    type: object
+    x-go-package: github.com/dupman/server/dto
+  UserLogin:
+    properties:
+      password:
+        description: User password
+        example: pa$$w0rd
+        type: string
+        x-go-name: Password
+      username:
+        description: Username or email
+        example: j_doe@dup.man
+        type: string
+        x-go-name: Username
+    required:
+    - username
+    - password
+    title: UserLogin represents user login payload.
+    type: object
+    x-go-package: github.com/dupman/server/dto
+  UserRegister:
+    properties:
+      email:
+        description: User Email
+        example: j_doe@dup.man
+        type: string
+        x-go-name: Email
+      firstName:
+        description: User First Name
+        example: John
+        type: string
+        x-go-name: FirstName
+      lastName:
+        description: User Last Name
+        example: Doe
+        type: string
+        x-go-name: LastName
+      password:
+        description: User password
+        example: pa$$w0rd
+        minimum: 8
+        type: string
+        x-go-name: Password
+      username:
+        description: Username
+        example: j_doe@dup.man
+        type: string
+        x-go-name: Username
+    required:
+    - username
+    - firstName
+    - lastName
+    - email
+    - password
+    title: UserRegister represents registration login payload.
+    type: object
+    x-go-package: github.com/dupman/server/dto
+host: localhost:8080
+info:
+  contact:
+    email: info@dupman.cloud
+    name: dupman
+    url: https://github.com/dupman
+  description: This is the documentation of the dupman server REST API.
+  license:
+    name: GPL-3.0
+    url: https://github.com/dupman/server/blob/main/LICENSE
+  title: dupman server REST API.
+  version: 0.0.0
+paths:
+  /account:
+    get:
+      operationId: currentUser
+      responses:
+        "200":
+          description: Ok
+          schema:
+            $ref: '#/definitions/UserAccount'
+        "401":
+          description: Access Denied
+          schema:
+            $ref: '#/definitions/HTTPError'
+      security:
+      - OAuth2PasswordBearer: null
+      summary: Get current authenticated user.
+      tags:
+      - Account
+  /auth/register:
+    post:
+      operationId: register
+      parameters:
+      - description: register payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/UserRegister'
+      responses:
+        "201":
+          description: Ok
+          schema:
+            $ref: '#/definitions/UserAccount'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/HTTPError'
+      summary: Register new user.
+      tags:
+      - Auth
+  /auth/token:
+    post:
+      operationId: token
+      parameters:
+      - description: login payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/UserLogin'
+      responses:
+        "200":
+          description: Ok
+          schema:
+            $ref: '#/definitions/JWTResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/HTTPError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HTTPError'
+      summary: Authenticate User.
+      tags:
+      - Auth
+produces:
+- application/json
+schemes:
+- http
+- https
+securityDefinitions:
+  OAuth2PasswordBearer:
+    flow: password
+    in: header
+    tokenUrl: /auth/token
+    type: oauth2
+swagger: "2.0"

@@ -87,15 +87,15 @@ func (s JWTAuthService) GenerateToken(user *model.User) (response dto.JWTRespons
 		return response, err
 	}
 
-	response.Token, err = jwt.NewWithClaims(jwt.SigningMethodRS512, claims).SignedString(privateKey)
+	response.AccessToken, err = jwt.NewWithClaims(jwt.SigningMethodRS512, claims).SignedString(privateKey)
 	if err != nil {
 		s.logger.Error(err)
 
 		return response, err
 	}
 
-	response.ExpiresAt = claims.ExpiresAt
-	response.IssuedAt = claims.IssuedAt
+	response.TokenType = "Bearer"
+	response.ExpiresIn = int64(s.config.Expiration.Seconds())
 
 	return response, nil
 }

@@ -44,3 +44,4 @@ issues:
     - Function 'LogEvent' is too long
     - calculated cyclomatic complexity for function LogEvent is
     - "`httpService` is unused"
+    - got 'access_token|token_type|expires_in' want '*'

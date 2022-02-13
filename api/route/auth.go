@@ -29,7 +29,7 @@ func (r AuthRoutes) Setup() {
 
 	api := r.handler.Gin.Group("/auth")
 
-	api.POST("/login", r.authController.Login)
+	api.POST("/token", r.authController.Token)
 	api.POST("/register", r.authController.Register)
 }
 

@@ -32,12 +32,12 @@ func NewHTTPService() HTTPService {
 
 // HTTPError sends HTTP error response.
 func (s HTTPService) HTTPError(c *gin.Context, code int, message interface{}) {
-	c.AbortWithStatusJSON(code, dto.Response{Code: code, Error: message})
+	c.AbortWithStatusJSON(code, dto.HTTPError{Code: code, Error: message})
 }
 
 // HTTPResponse sends HTTP response.
 func (s HTTPService) HTTPResponse(c *gin.Context, code int, data interface{}) {
-	c.JSON(code, dto.Response{Code: code, Data: data})
+	c.JSON(code, dto.HTTPResponse{Code: code, Data: data})
 }
 
 // HTTPValidationError sends HTTP validation response.

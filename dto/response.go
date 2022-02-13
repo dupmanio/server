@@ -11,9 +11,30 @@
 
 package dto
 
-// Response represents HTTP response data.
-type Response struct {
-	Code  int         `json:"code,omitempty"`
-	Data  interface{} `json:"data,omitempty"`
-	Error interface{} `json:"error,omitempty"`
+// HTTPResponse represents HTTP response data.
+// swagger:model HTTPResponse
+type HTTPResponse struct {
+	// HTTP status code
+	//
+	// required: true
+	Code int `json:"code"`
+
+	// HTTP response body
+	//
+	// required: true
+	Data interface{} `json:"data"`
+}
+
+// HTTPError represents HTTP error data.
+// swagger:model HTTPError
+type HTTPError struct {
+	// HTTP status code
+	//
+	// required: true
+	Code int `json:"code"`
+
+	// HTTP error body
+	//
+	// required: true
+	Error interface{} `json:"error"`
 }

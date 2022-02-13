@@ -24,10 +24,25 @@ var (
 )
 
 // JWTResponse represents JWT token data.
+// swagger:model JWTResponse
 type JWTResponse struct {
-	Token     string `json:"token,omitempty"`
-	ExpiresAt int64  `json:"expiresAt,omitempty"`
-	IssuedAt  int64  `json:"issuedAt,omitempty"`
+	// JWT Access Token
+	//
+	// required: true
+	// example: eyJhbGciOiJSUz...dAlCslnO3YqiCA
+	AccessToken string `json:"access_token"`
+
+	// JWT Token Type
+	//
+	// required: true
+	// example: Bearer
+	TokenType string `json:"token_type"`
+
+	// JWT Token Expires In
+	//
+	// required: true
+	// example: 3600
+	ExpiresIn int64 `json:"expires_in"`
 }
 
 // JWTClaims represents JWT token claim.

@@ -36,6 +36,23 @@ func NewAccountController(userService service.UserService) AccountController {
 }
 
 // GetCurrentAccount gets authenticated account.
+// swagger:operation GET /account Account currentUser
+//
+// Get current authenticated user.
+//
+// ---
+// Security:
+// - OAuth2PasswordBearer:
+//
+// responses:
+//   200:
+//     description: Ok
+//     schema:
+//         $ref: "#/definitions/UserAccount"
+//   401:
+//     description: Access Denied
+//     schema:
+//         $ref: "#/definitions/HTTPError"
 func (a AccountController) GetCurrentAccount(c *gin.Context) {
 	var userAccount dto.UserAccount
 

@@ -41,8 +41,34 @@ func NewAuthController(
 	}
 }
 
-// Login authenticates user.
-func (a AuthController) Login(c *gin.Context) {
+// Token creates the oauth token.
+// swagger:operation POST /auth/token Auth token
+//
+// Authenticate User.
+//
+// ---
+// parameters:
+// - name: body
+//   in: body
+//   description: login payload
+//   required: true
+//   schema:
+//     $ref: "#/definitions/UserLogin"
+//
+// responses:
+//   200:
+//     description: Ok
+//     schema:
+//         $ref: "#/definitions/JWTResponse"
+//   400:
+//     description: Bad Request
+//     schema:
+//         $ref: "#/definitions/HTTPError"
+//   401:
+//     description: Unauthorized
+//     schema:
+//         $ref: "#/definitions/HTTPError"
+func (a AuthController) Token(c *gin.Context) {
 	var credentials *dto.UserLogin
 
 	if err := c.ShouldBind(&credentials); err != nil {
@@ -51,6 +77,7 @@ func (a AuthController) Login(c *gin.Context) {
 		return
 	}
 
+	// @todo: implement error
 	user, err := a.userService.GetUserByUsernameOrEmail(credentials.Username)
 	if err != nil {
 		a.httpService.HTTPError(c, http.StatusUnauthorized, resources.InvalidCredentials)
@@ -71,10 +98,32 @@ func (a AuthController) Login(c *gin.Context) {
 		return
 	}
 
-	a.httpService.HTTPResponse(c, http.StatusOK, token)
+	c.JSON(http.StatusOK, token)
 }
 
 // Register creates a new user.
+// swagger:operation POST /auth/register Auth register
+//
+// Register new user.
+//
+// ---
+// parameters:
+// - name: body
+//   in: body
+//   description: register payload
+//   required: true
+//   schema:
+//     $ref: "#/definitions/UserRegister"
+//
+// responses:
+//   201:
+//     description: Ok
+//     schema:
+//         $ref: "#/definitions/UserAccount"
+//   400:
+//     description: Bad Request
+//     schema:
+//         $ref: "#/definitions/HTTPError"
 func (a AuthController) Register(c *gin.Context) {
 	var (
 		userModel = model.User{}
