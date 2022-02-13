@@ -50,7 +50,7 @@ definitions:
       error_uri:
         description: OAuth error URI
         type: string
-        x-go-name: ErrorUri
+        x-go-name: ErrorURI
     required:
     - error
     title: OAuthError represents oauth error.
