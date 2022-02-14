@@ -54,6 +54,6 @@ Please see [CHANGELOG](CHANGELOG.md) for details.
 ## License
 
 Copyright (c) 2022 [dupman](https://dupman.cloud).  
-Released under the [GPL-3.0](LICENSE) license.
+Released under the [ Apache-2.0](LICENSE) license.
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdupman%2Fserver.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdupman%2Fserver?ref=badge_large)

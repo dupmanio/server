@@ -7,7 +7,7 @@
 // Base path: /
 // Version: 0.0.0
 // TermsOfService https://github.com/dupman/server/blob/main/LICENSE
-// License: GPL-3.0 https://github.com/dupman/server/blob/main/LICENSE
+// License:  Apache-2.0 https://github.com/dupman/server/blob/main/LICENSE
 // Contact: dupman <info@dupman.cloud> https://github.com/dupman
 //
 // Consumes:

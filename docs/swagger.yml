@@ -183,7 +183,7 @@ info:
     url: https://github.com/dupman
   description: This is the documentation of the dupman server REST API.
   license:
-    name: GPL-3.0
+    name:  Apache-2.0
     url: https://github.com/dupman/server/blob/main/LICENSE
   title: dupman server REST API.
   version: 0.0.0
