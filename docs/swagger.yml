@@ -175,6 +175,60 @@ definitions:
     title: UserRegister represents registration login payload.
     type: object
     x-go-package: github.com/dupman/server/dto
+  WebsiteOnCreate:
+    properties:
+      token:
+        description: Website security Token
+        example: h^djncU878*jKCN&87I#DK
+        type: string
+        x-go-name: Token
+      url:
+        description: Website URL
+        example: https://eample.com
+        type: string
+        x-go-name: URL
+    required:
+    - url
+    - token
+    title: WebsiteOnCreate represents website creation payload.
+    type: object
+    x-go-package: github.com/dupman/server/dto
+  WebsiteOnResponse:
+    properties:
+      createdAt:
+        description: Website creation date and time
+        format: date-time
+        type: string
+        x-go-name: CreatedAt
+      id:
+        description: Website ID
+        format: uuid
+        type: string
+        x-go-name: ID
+      updatedAt:
+        description: Website update date and time
+        format: date-time
+        type: string
+        x-go-name: UpdatedAt
+      url:
+        description: Website URL
+        example: https://eample.com
+        type: string
+        x-go-name: URL
+    required:
+    - id
+    - createdAt
+    - updatedAt
+    - url
+    title: WebsiteOnResponse represents website response payload.
+    type: object
+    x-go-package: github.com/dupman/server/dto
+  WebsitesOnResponse:
+    items:
+      $ref: '#/definitions/WebsiteOnResponse'
+    title: WebsitesOnResponse represents multiple WebsiteOnResponse-s.
+    type: array
+    x-go-package: github.com/dupman/server/dto
 host: localhost:8080
 info:
   contact:
@@ -183,7 +237,7 @@ info:
     url: https://github.com/dupman
   description: This is the documentation of the dupman server REST API.
   license:
-    name:  Apache-2.0
+    name: Apache-2.0
     url: https://github.com/dupman/server/blob/main/LICENSE
   title: dupman server REST API.
   version: 0.0.0
@@ -217,7 +271,7 @@ paths:
           $ref: '#/definitions/UserRegister'
       responses:
         "201":
-          description: Ok
+          description: Created
           schema:
             $ref: '#/definitions/UserAccount'
         "400":
@@ -275,6 +329,42 @@ paths:
       summary: Authenticate User.
       tags:
       - Auth
+  /website:
+    get:
+      operationId: getAll
+      responses:
+        "200":
+          description: Ok
+          schema:
+            $ref: '#/definitions/WebsitesOnResponse'
+      security:
+      - OAuth2PasswordBearer: []
+      summary: Get user websites.
+      tags:
+      - Website
+    post:
+      operationId: create
+      parameters:
+      - description: website payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/WebsiteOnCreate'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/WebsiteOnResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/HTTPError'
+      security:
+      - OAuth2PasswordBearer: []
+      summary: Create new website.
+      tags:
+      - Website
 produces:
 - application/json
 schemes:

@@ -154,7 +154,7 @@ func (c AuthController) Token(ctx *gin.Context) {
 //
 // responses:
 //   201:
-//     description: Ok
+//     description: Created
 //     schema:
 //         $ref: "#/definitions/UserAccount"
 //   400:

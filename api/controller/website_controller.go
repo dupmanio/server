@@ -38,6 +38,32 @@ func NewWebsiteController(
 	}
 }
 
+// Create creates new model.Website.
+// swagger:operation POST /website Website create
+//
+// Create new website.
+//
+// ---
+// parameters:
+// - name: body
+//   in: body
+//   description: website payload
+//   required: true
+//   schema:
+//     $ref: "#/definitions/WebsiteOnCreate"
+//
+// Security:
+// - OAuth2PasswordBearer: []
+//
+// responses:
+//   201:
+//     description: Created
+//     schema:
+//         $ref: "#/definitions/WebsiteOnResponse"
+//   400:
+//     description: Bad Request
+//     schema:
+//         $ref: "#/definitions/HTTPError"
 func (c WebsiteController) Create(ctx *gin.Context) {
 	var (
 		websiteModel = model.Website{}
@@ -67,6 +93,20 @@ func (c WebsiteController) Create(ctx *gin.Context) {
 	c.httpService.HTTPResponse(ctx, http.StatusCreated, websiteResponse)
 }
 
+// All gets model.Website entities for current user.
+// swagger:operation GET /website Website getAll
+//
+// Get user websites.
+//
+// ---
+// Security:
+// - OAuth2PasswordBearer: []
+//
+// responses:
+//   200:
+//     description: Ok
+//     schema:
+//         $ref: "#/definitions/WebsitesOnResponse"
 func (c WebsiteController) All(ctx *gin.Context) {
 	websitesResponse := dto.WebsitesOnResponse{}
 
