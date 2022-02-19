@@ -14,8 +14,6 @@ linters-settings:
     ignore-type-assert-ok: true
     ignore-map-index-ok: true
     ignore-chan-recv-ok: true
-    ignore-decls:
-      - c *gin.Context
 
   gosec:
     config:

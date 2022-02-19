@@ -16,6 +16,7 @@ import "go.uber.org/fx"
 // Module exports service module.
 var Module = fx.Options(
 	fx.Provide(NewHTTPService),
-	fx.Provide(NewUserService),
 	fx.Provide(NewJWTAuthService),
+	fx.Provide(NewUserService),
+	fx.Provide(NewWebsiteService),
 )

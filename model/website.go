@@ -9,9 +9,17 @@
  * Written by Temuri Takalandze <me@abgeo.dev>, February 2022
  */
 
-package constant
+package model
 
-const (
-	// UserIDKey represents key for storing authenticated user ID.
-	UserIDKey = "user_id"
+import (
+	sqlType "github.com/dupman/server/sql/type"
+	"github.com/google/uuid"
 )
+
+// Website represents website entity.
+type Website struct {
+	Base
+	URL    string
+	Token  sqlType.WebsiteToken
+	UserID uuid.UUID
+}

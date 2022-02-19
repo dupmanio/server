@@ -12,30 +12,25 @@
 package model
 
 import (
-	"github.com/google/uuid"
+	"github.com/dupman/server/helper"
 	"gorm.io/gorm"
 )
 
-// User represents user entity.
-type User struct {
+type KeyPair struct {
 	Base
-	Username  string `gorm:"unique"`
-	FirstName string
-	LastName  string
-	Email     string `gorm:"unique"`
-	Password  string
-	Websites  []Website
-	KeyPairID uuid.UUID `gorm:"->;<-:create"`
-	KeyPair   KeyPair   `gorm:"->;<-:create"`
+	PrivateKey string
+	PublicKey  string
 }
 
-func (e *User) BeforeCreate(tx *gorm.DB) (err error) {
+func (e *KeyPair) BeforeCreate(tx *gorm.DB) (err error) {
 	if err = e.Base.BeforeCreate(tx); err != nil {
 		return err
 	}
 
-	e.KeyPair = KeyPair{
-		PrivateKey: "tmp",
+	encryptor := helper.NewRSAEncryptor()
+	if err = encryptor.GenerateKeyPair(); err == nil {
+		e.PrivateKey = encryptor.PrivateKey()
+		e.PublicKey, err = encryptor.PublicKey()
 	}
 
 	return err

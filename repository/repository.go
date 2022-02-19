@@ -15,7 +15,9 @@ import "go.uber.org/fx"
 
 // Module exports repository module.
 var Module = fx.Options(
+	fx.Provide(NewKeyPairRepository),
 	fx.Provide(NewUserRepository),
+	fx.Provide(NewWebsiteRepository),
 	fx.Provide(NewRepositories),
 )
 
@@ -29,10 +31,14 @@ type IRepository interface {
 
 // NewRepositories creates a new Repositories.
 func NewRepositories(
+	keyPairRepository KeyPairRepository,
 	userRepository UserRepository,
+	websiteRepository WebsiteRepository,
 ) Repositories {
 	return Repositories{
+		keyPairRepository,
 		userRepository,
+		websiteRepository,
 	}
 }
 

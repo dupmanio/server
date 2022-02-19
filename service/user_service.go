@@ -31,9 +31,9 @@ func NewUserService(repository repository.UserRepository) UserService {
 	}
 }
 
-// GetUser gets one user.
-func (s UserService) GetUser(id uuid.UUID) (user model.User, err error) {
-	return user, s.repository.First(&user, id).Error
+// Get gets one user.
+func (s UserService) Get(id uuid.UUID) (user model.User, err error) {
+	return user, s.repository.Joins("KeyPair").First(&user, id).Error
 }
 
 // CreateUser creates the user.
@@ -41,9 +41,10 @@ func (s UserService) CreateUser(user *model.User) error {
 	return s.repository.Create(&user).Error
 }
 
-// GetUserByUsernameOrEmail loads the user by username or email.
-func (s UserService) GetUserByUsernameOrEmail(username string) (user model.User, err error) {
+// GetByUsernameOrEmail loads the user by username or email.
+func (s UserService) GetByUsernameOrEmail(username string) (user model.User, err error) {
 	return user, s.repository.
 		Where("username = @username OR email = @username", sql.Named("username", username)).
+		Joins("KeyPair").
 		First(&user).Error
 }

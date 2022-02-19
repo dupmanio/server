@@ -14,24 +14,21 @@ package controller
 import (
 	"net/http"
 
-	"github.com/dupman/server/constant"
 	"github.com/dupman/server/dto"
 	"github.com/dupman/server/service"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 )
 
 // AccountController data type.
 type AccountController struct {
-	AbstractController
-	userService service.UserService
+	httpService service.HTTPService
 }
 
 // NewAccountController creates a new AccountController.
-func NewAccountController(userService service.UserService) AccountController {
+func NewAccountController(httpService service.HTTPService) AccountController {
 	return AccountController{
-		userService: userService,
+		httpService: httpService,
 	}
 }
 
@@ -53,12 +50,11 @@ func NewAccountController(userService service.UserService) AccountController {
 //     description: Access Denied
 //     schema:
 //         $ref: "#/definitions/HTTPError"
-func (a AccountController) GetCurrentAccount(c *gin.Context) {
+func (c AccountController) GetCurrentAccount(ctx *gin.Context) {
 	var userAccount dto.UserAccount
 
-	id, _ := uuid.Parse(c.GetString(constant.UserIDKey))
-	user, _ := a.userService.GetUser(id)
+	user, _ := c.httpService.CurrentUser(ctx)
 	_ = copier.Copy(&userAccount, &user)
 
-	a.httpService.HTTPResponse(c, http.StatusOK, userAccount)
+	c.httpService.HTTPResponse(ctx, http.StatusOK, userAccount)
 }

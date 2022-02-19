@@ -9,13 +9,14 @@
  * Written by Temuri Takalandze <me@abgeo.dev>, February 2022
  */
 
-package controller
+package constant
 
-import (
-	"github.com/dupman/server/service"
+type ContextKey string
+
+const (
+	// UserIDKey represents key for storing authenticated user ID.
+	UserIDKey = "user_id"
+
+	// EncryptionKeyKey represents key for website encryption key.
+	EncryptionKeyKey ContextKey = "encryption_key"
 )
-
-// AbstractController data type.
-type AbstractController struct {
-	httpService service.HTTPService
-}

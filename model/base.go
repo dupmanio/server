@@ -25,9 +25,8 @@ type Base struct {
 	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
-// BeforeCreate will set a UUID rather than numeric ID.
-func (b *Base) BeforeCreate(tx *gorm.DB) (err error) {
-	b.ID = uuid.New()
+func (e *Base) BeforeCreate(tx *gorm.DB) (err error) {
+	e.ID = uuid.New()
 
 	return err
 }

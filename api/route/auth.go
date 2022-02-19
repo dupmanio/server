@@ -27,10 +27,10 @@ type AuthRoutes struct {
 func (r AuthRoutes) Setup() {
 	r.logger.Debug("Setting up Auth routes")
 
-	api := r.handler.Gin.Group("/auth")
+	group := r.handler.Gin.Group("/auth")
 
-	api.POST("/token", r.authController.Token)
-	api.POST("/register", r.authController.Register)
+	group.POST("/token", r.authController.Token)
+	group.POST("/register", r.authController.Register)
 }
 
 // NewAuthRoutes creates AuthRoutes.

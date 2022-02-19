@@ -20,6 +20,7 @@ import (
 // Module exports validator module.
 var Module = fx.Options(
 	fx.Provide(NewUniqueUsernameOrEmailValidator),
+	fx.Provide(NewURLValidator),
 	fx.Provide(NewValidators),
 )
 
@@ -34,10 +35,12 @@ type IValidator interface {
 // NewValidators creates a new Validators.
 func NewValidators(
 	uniqueUsernameOrEmail UniqueUsernameOrEmailValidator,
+	urlValidator URLValidator,
 ) Validators {
 	return Validators{
 		"unique_username": uniqueUsernameOrEmail,
 		"unique_email":    uniqueUsernameOrEmail,
+		"url":             urlValidator,
 	}
 }
 

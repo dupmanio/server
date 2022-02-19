@@ -23,4 +23,6 @@ const (
 	ValueIsNotEmail       = "Value of field '%s' is not a valid Email address"
 	UsernameIsTaken       = "Username is taken"
 	EmailIsTaken          = "Email is taken"
+	ValueIsNotURL         = "Value of field '%s' is not a valid URL address"
+	UnableToDecodeKey     = "unable to decode key"
 )

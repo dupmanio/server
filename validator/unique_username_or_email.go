@@ -30,7 +30,7 @@ func NewUniqueUsernameOrEmailValidator(userService service.UserService) UniqueUs
 
 // Validate validates field.
 func (v UniqueUsernameOrEmailValidator) Validate(fl validator.FieldLevel) bool {
-	_, err := v.userService.GetUserByUsernameOrEmail(fl.Field().String())
+	_, err := v.userService.GetByUsernameOrEmail(fl.Field().String())
 
 	return err != nil
 }

@@ -17,4 +17,5 @@ import "go.uber.org/fx"
 var Module = fx.Options(
 	fx.Provide(NewAccountController),
 	fx.Provide(NewAuthController),
+	fx.Provide(NewWebsiteController),
 )

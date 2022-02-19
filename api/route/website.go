@@ -17,34 +17,35 @@ import (
 	"github.com/dupman/server/lib"
 )
 
-// AccountRoutes data type.
-type AccountRoutes struct {
+// WebsiteRoutes data type.
+type WebsiteRoutes struct {
 	handler           lib.RequestHandler
 	logger            lib.Logger
-	accountController controller.AccountController
+	websiteController controller.WebsiteController
 	authMiddleware    middleware.JWTAuthMiddleware
 }
 
-// Setup sets up AccountRoutes.
-func (r AccountRoutes) Setup() {
-	r.logger.Debug("Setting up Account route")
+// Setup sets up WebsiteRoutes.
+func (r WebsiteRoutes) Setup() {
+	r.logger.Debug("Setting up Website route")
 
-	group := r.handler.Gin.Group("/account").Use(r.authMiddleware.Handler())
+	group := r.handler.Gin.Group("/website").Use(r.authMiddleware.Handler())
 
-	group.GET("/", r.accountController.GetCurrentAccount)
+	group.GET("/", r.websiteController.All)
+	group.POST("/", r.websiteController.Create)
 }
 
-// NewAccountRoutes creates AccountRoutes.
-func NewAccountRoutes(
+// NewWebsiteRoutes creates WebsiteRoutes.
+func NewWebsiteRoutes(
 	handler lib.RequestHandler,
 	logger lib.Logger,
-	accountController controller.AccountController,
+	websiteController controller.WebsiteController,
 	authMiddleware middleware.JWTAuthMiddleware,
-) AccountRoutes {
-	return AccountRoutes{
+) WebsiteRoutes {
+	return WebsiteRoutes{
 		handler:           handler,
 		logger:            logger,
-		accountController: accountController,
+		websiteController: websiteController,
 		authMiddleware:    authMiddleware,
 	}
 }

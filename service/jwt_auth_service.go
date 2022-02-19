@@ -62,7 +62,7 @@ func (s JWTAuthService) Authorize(tokenString string) (user model.User, err erro
 		return user, fmt.Errorf("%s. %w", resources.InvalidToken, err)
 	}
 
-	if user, err = s.userService.GetUser(claims.ID); err != nil {
+	if user, err = s.userService.Get(claims.ID); err != nil {
 		return user, errInvalidToken
 	}
 

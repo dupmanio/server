@@ -26,17 +26,19 @@ import (
 
 // AuthController data type.
 type AuthController struct {
-	AbstractController
+	httpService service.HTTPService
 	authService service.JWTAuthService
 	userService service.UserService
 }
 
 // NewAuthController creates a new AuthController.
 func NewAuthController(
+	httpService service.HTTPService,
 	authService service.JWTAuthService,
 	userService service.UserService,
 ) AuthController {
 	return AuthController{
+		httpService: httpService,
 		authService: authService,
 		userService: userService,
 	}
@@ -92,21 +94,21 @@ func NewAuthController(
 //     description: Unauthorized
 //     schema:
 //         $ref: "#/definitions/OAuthError"
-func (a AuthController) Token(c *gin.Context) {
+func (c AuthController) Token(ctx *gin.Context) {
 	var credentials *dto.UserLogin
 
-	if err := c.ShouldBind(&credentials); err != nil {
-		c.JSON(http.StatusBadRequest, dto.OAuthError{
+	if err := ctx.ShouldBind(&credentials); err != nil {
+		ctx.JSON(http.StatusBadRequest, dto.OAuthError{
 			Error:            dto.OAuthInvalidRequest,
-			ErrorDescription: strings.Join(a.httpService.NormalizeHTTPValidationError(err), "\n"),
+			ErrorDescription: strings.Join(c.httpService.NormalizeHTTPValidationError(err), "\n"),
 		})
 
 		return
 	}
 
-	user, err := a.userService.GetUserByUsernameOrEmail(credentials.Username)
+	user, err := c.userService.GetByUsernameOrEmail(credentials.Username)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, dto.OAuthError{
+		ctx.JSON(http.StatusUnauthorized, dto.OAuthError{
 			Error:            dto.OAuthInvalidGrant,
 			ErrorDescription: resources.InvalidCredentials,
 		})
@@ -115,7 +117,7 @@ func (a AuthController) Token(c *gin.Context) {
 	}
 
 	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(credentials.Password)); err != nil {
-		c.JSON(http.StatusUnauthorized, dto.OAuthError{
+		ctx.JSON(http.StatusUnauthorized, dto.OAuthError{
 			Error:            dto.OAuthInvalidGrant,
 			ErrorDescription: resources.InvalidCredentials,
 		})
@@ -123,9 +125,9 @@ func (a AuthController) Token(c *gin.Context) {
 		return
 	}
 
-	token, err := a.authService.GenerateToken(&user)
+	token, err := c.authService.GenerateToken(&user)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, dto.OAuthError{
+		ctx.JSON(http.StatusUnauthorized, dto.OAuthError{
 			Error:            dto.OAuthInvalidGrant,
 			ErrorDescription: resources.UnableToCreateToken,
 		})
@@ -133,7 +135,7 @@ func (a AuthController) Token(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, token)
+	ctx.JSON(http.StatusOK, token)
 }
 
 // Register creates a new user.
@@ -159,7 +161,7 @@ func (a AuthController) Token(c *gin.Context) {
 //     description: Bad Request
 //     schema:
 //         $ref: "#/definitions/HTTPError"
-func (a AuthController) Register(c *gin.Context) {
+func (c AuthController) Register(ctx *gin.Context) {
 	var (
 		userModel = model.User{}
 
@@ -169,14 +171,14 @@ func (a AuthController) Register(c *gin.Context) {
 		err            error
 	)
 
-	if err = c.ShouldBind(&userRaw); err != nil {
-		a.httpService.HTTPValidationError(c, err)
+	if err = ctx.ShouldBind(&userRaw); err != nil {
+		c.httpService.HTTPValidationError(ctx, err)
 
 		return
 	}
 
 	if hashedPassword, err = bcrypt.GenerateFromPassword([]byte(userRaw.Password), bcrypt.DefaultCost); err != nil {
-		a.httpService.HTTPError(c, http.StatusInternalServerError, resources.FailedHashingPassword)
+		c.httpService.HTTPError(ctx, http.StatusInternalServerError, resources.FailedHashingPassword)
 
 		return
 	}
@@ -184,12 +186,12 @@ func (a AuthController) Register(c *gin.Context) {
 	_ = copier.Copy(&userModel, &userRaw)
 	userModel.Password = string(hashedPassword)
 
-	if err = a.userService.CreateUser(&userModel); err != nil {
-		a.httpService.HTTPError(c, http.StatusInternalServerError, err.Error())
+	if err = c.userService.CreateUser(&userModel); err != nil {
+		c.httpService.HTTPError(ctx, http.StatusInternalServerError, err.Error())
 
 		return
 	}
 
 	_ = copier.Copy(&userAccount, &userModel)
-	a.httpService.HTTPResponse(c, http.StatusCreated, userAccount)
+	c.httpService.HTTPResponse(ctx, http.StatusCreated, userAccount)
 }

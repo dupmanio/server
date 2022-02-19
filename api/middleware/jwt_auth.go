@@ -41,8 +41,8 @@ func (m JWTAuthMiddleware) Setup() {}
 
 // Handler handles middleware functionality.
 func (m JWTAuthMiddleware) Handler() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		token := strings.TrimPrefix(c.GetHeader("Authorization"), "Bearer ")
+	return func(ctx *gin.Context) {
+		token := strings.TrimPrefix(ctx.GetHeader("Authorization"), "Bearer ")
 		if token != "" {
 			var (
 				user model.User
@@ -50,19 +50,19 @@ func (m JWTAuthMiddleware) Handler() gin.HandlerFunc {
 			)
 
 			if user, err = m.authService.Authorize(token); err != nil {
-				m.httpService.HTTPError(c, http.StatusUnauthorized, err.Error())
-				c.Abort()
+				m.httpService.HTTPError(ctx, http.StatusUnauthorized, err.Error())
+				ctx.Abort()
 
 				return
 			}
 
-			c.Set(constant.UserIDKey, user.ID.String())
-			c.Next()
+			ctx.Set(constant.UserIDKey, user.ID.String())
+			ctx.Next()
 
 			return
 		}
 
-		m.httpService.HTTPError(c, http.StatusUnauthorized, resources.AccessDenied)
-		c.Abort()
+		m.httpService.HTTPError(ctx, http.StatusUnauthorized, resources.AccessDenied)
+		ctx.Abort()
 	}
 }

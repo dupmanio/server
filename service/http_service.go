@@ -16,18 +16,25 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/dupman/server/constant"
 	"github.com/dupman/server/dto"
+	"github.com/dupman/server/model"
 	"github.com/dupman/server/resources"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
 )
 
 // HTTPService data type.
-type HTTPService struct{}
+type HTTPService struct {
+	userService UserService
+}
 
 // NewHTTPService creates a new HTTPService.
-func NewHTTPService() HTTPService {
-	return HTTPService{}
+func NewHTTPService(userService UserService) HTTPService {
+	return HTTPService{
+		userService: userService,
+	}
 }
 
 // HTTPError sends HTTP error response.
@@ -55,6 +62,24 @@ func (s HTTPService) NormalizeHTTPValidationError(err error) []string {
 	return []string{err.Error()}
 }
 
+// CurrentUserID returns the current user's ID.
+func (s HTTPService) CurrentUserID(ctx *gin.Context) uuid.UUID {
+	if id, err := uuid.Parse(ctx.GetString(constant.UserIDKey)); err == nil {
+		return id
+	}
+
+	return uuid.Nil
+}
+
+// CurrentUser returns the current user.
+func (s HTTPService) CurrentUser(ctx *gin.Context) (user model.User, err error) {
+	if user, err = s.userService.Get(s.CurrentUserID(ctx)); err != nil {
+		return user, err
+	}
+
+	return user, nil
+}
+
 func (s HTTPService) formatValidationErrors(validationErrors validator.ValidationErrors) (errors []string) {
 	for _, fieldError := range validationErrors {
 		var errorMessage string
@@ -70,6 +95,8 @@ func (s HTTPService) formatValidationErrors(validationErrors validator.Validatio
 			errorMessage = resources.UsernameIsTaken
 		case "unique_email":
 			errorMessage = resources.EmailIsTaken
+		case "url":
+			errorMessage = fmt.Sprintf(resources.ValueIsNotURL, fieldError.Field())
 		default:
 			errorMessage = fieldError.Error()
 		}
