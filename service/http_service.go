@@ -15,9 +15,11 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/dupman/server/constant"
 	"github.com/dupman/server/dto"
+	"github.com/dupman/server/helper"
 	"github.com/dupman/server/model"
 	"github.com/dupman/server/resources"
 	"github.com/gin-gonic/gin"
@@ -45,6 +47,11 @@ func (s HTTPService) HTTPError(c *gin.Context, code int, message interface{}) {
 // HTTPResponse sends HTTP response.
 func (s HTTPService) HTTPResponse(c *gin.Context, code int, data interface{}) {
 	c.JSON(code, dto.HTTPResponse{Code: code, Data: data})
+}
+
+// HTTPPaginatedResponse sends HTTP response with pagination.
+func (s HTTPService) HTTPPaginatedResponse(c *gin.Context, code int, data interface{}, pagination helper.Pagination) {
+	c.JSON(code, dto.HTTPResponse{Code: code, Data: data, Pagination: pagination})
 }
 
 // HTTPValidationError sends HTTP validation response.
@@ -78,6 +85,17 @@ func (s HTTPService) CurrentUser(ctx *gin.Context) (user model.User, err error) 
 	}
 
 	return user, nil
+}
+
+// Paginate returns pagination object from the request.
+func (s HTTPService) Paginate(ctx *gin.Context) *helper.Pagination {
+	limit, _ := strconv.Atoi(ctx.Query("limit"))
+	page, _ := strconv.Atoi(ctx.Query("page"))
+
+	return &helper.Pagination{
+		Limit: limit,
+		Page:  page,
+	}
 }
 
 func (s HTTPService) formatValidationErrors(validationErrors validator.ValidationErrors) (errors []string) {

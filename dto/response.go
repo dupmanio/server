@@ -23,6 +23,9 @@ type HTTPResponse struct {
 	//
 	// required: true
 	Data interface{} `json:"data"`
+
+	// Pagination data
+	Pagination interface{} `json:"pagination,omitempty"`
 }
 
 // HTTPError represents HTTP error data.

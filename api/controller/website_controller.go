@@ -111,8 +111,9 @@ func (c WebsiteController) All(ctx *gin.Context) {
 	websitesResponse := dto.WebsitesOnResponse{}
 
 	uid := c.httpService.CurrentUserID(ctx)
-	websites, _ := c.websiteService.GetByUser(uid)
+	pagination := c.httpService.Paginate(ctx)
+	websites, _ := c.websiteService.GetByUser(uid, pagination)
 	_ = copier.Copy(&websitesResponse, &websites)
 
-	c.httpService.HTTPResponse(ctx, http.StatusOK, websitesResponse)
+	c.httpService.HTTPPaginatedResponse(ctx, http.StatusOK, websitesResponse, *pagination)
 }

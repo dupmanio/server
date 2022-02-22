@@ -4,7 +4,6 @@
 
 <h1 align="center">dupman/server</h1>
 
-
 <p align="center">
     <a href="https://github.com/dupman/server">
         <img alt="GitHub go.mod Go version of a Go module" src="https://img.shields.io/github/go-mod/go-version/dupman/server.svg">

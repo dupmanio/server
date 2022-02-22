@@ -15,6 +15,7 @@ import (
 	"context"
 
 	"github.com/dupman/server/constant"
+	"github.com/dupman/server/helper"
 	"github.com/dupman/server/model"
 	"github.com/dupman/server/repository"
 	"github.com/google/uuid"
@@ -22,6 +23,7 @@ import (
 
 // WebsiteService data structure.
 type WebsiteService struct {
+	AbstractService
 	repository repository.WebsiteRepository
 }
 
@@ -32,6 +34,7 @@ func NewWebsiteService(repository repository.WebsiteRepository) WebsiteService {
 	}
 }
 
+// Create creates new website.
 func (s WebsiteService) Create(website *model.Website, encryptionKey string) (err error) {
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, constant.EncryptionKeyKey, encryptionKey)
@@ -40,6 +43,13 @@ func (s WebsiteService) Create(website *model.Website, encryptionKey string) (er
 }
 
 // GetByUser gets all websites for given user.
-func (s WebsiteService) GetByUser(userID uuid.UUID) (websites []model.Website, err error) {
-	return websites, s.repository.Where("user_id", userID).Find(&websites).Error
+func (s WebsiteService) GetByUser(
+	userID uuid.UUID,
+	pagination *helper.Pagination,
+) (websites []model.Website, err error) {
+	return websites, s.repository.
+		Scopes(s.withUser(userID)).
+		Scopes(s.paginate(websites, pagination, s.repository.DB)).
+		Find(&websites).
+		Error
 }
