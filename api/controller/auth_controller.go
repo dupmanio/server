@@ -186,7 +186,7 @@ func (c AuthController) Register(ctx *gin.Context) {
 	_ = copier.Copy(&userModel, &userRaw)
 	userModel.Password = string(hashedPassword)
 
-	if err = c.userService.CreateUser(&userModel); err != nil {
+	if err = c.userService.Create(&userModel); err != nil {
 		c.httpService.HTTPError(ctx, http.StatusInternalServerError, err.Error())
 
 		return

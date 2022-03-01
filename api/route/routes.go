@@ -18,6 +18,7 @@ var Module = fx.Options(
 	fx.Provide(NewAccountRoutes),
 	fx.Provide(NewAuthRoutes),
 	fx.Provide(NewWebsiteRoutes),
+	fx.Provide(NewSystemRoutes),
 	fx.Provide(NewRoutes),
 )
 
@@ -33,11 +34,13 @@ type Route interface {
 func NewRoutes(
 	accountRoutes AccountRoutes,
 	authRoutes AuthRoutes,
+	systemRoutes SystemRoutes,
 	websiteRoutes WebsiteRoutes,
 ) Routes {
 	return Routes{
 		accountRoutes,
 		authRoutes,
+		systemRoutes,
 		websiteRoutes,
 	}
 }

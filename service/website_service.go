@@ -42,6 +42,14 @@ func (s WebsiteService) Create(website *model.Website, encryptionKey string) (er
 	return s.repository.WithContext(ctx).Create(website).Error
 }
 
+// GetAll gets all websites.
+func (s WebsiteService) GetAll(pagination *helper.Pagination) (websites []model.Website, err error) {
+	return websites, s.repository.
+		Scopes(s.paginate(websites, pagination, s.repository.DB)).
+		Find(&websites).
+		Error
+}
+
 // GetByUser gets all websites for given user.
 func (s WebsiteService) GetByUser(
 	userID uuid.UUID,

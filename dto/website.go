@@ -23,7 +23,7 @@ type WebsiteOnCreate struct {
 	// Website URL
 	//
 	// required: true
-	// example: https://eample.com
+	// example: https://example.com
 	URL string `json:"url" binding:"required,url"`
 
 	// Website security Token
@@ -55,10 +55,36 @@ type WebsiteOnResponse struct {
 	// Website URL
 	//
 	// required: true
-	// example: https://eample.com
+	// example: https://example.com
 	URL string `json:"url" binding:"required"`
 }
 
 // WebsitesOnResponse represents multiple WebsiteOnResponse-s.
 // swagger:model WebsitesOnResponse
 type WebsitesOnResponse []WebsiteOnResponse
+
+// WebsiteOnSystemResponse represents website response payload for the system route.
+// swagger:model WebsiteOnSystemResponse
+type WebsiteOnSystemResponse struct {
+	// Website ID
+	//
+	// required: true
+	// swagger:strfmt uuid
+	ID uuid.UUID `json:"id" binding:"required"`
+
+	// Website URL
+	//
+	// required: true
+	// example: https://example.com
+	URL string `json:"url" binding:"required"`
+
+	// Website Token
+	//
+	// required: true
+	// example: gwadadad1p...1Pjshdjw==
+	Token string `json:"token" binding:"required"`
+}
+
+// WebsitesOnSystemResponse represents multiple WebsiteOnSystemResponse-s.
+// swagger:model WebsitesOnSystemResponse
+type WebsitesOnSystemResponse []WebsiteOnSystemResponse

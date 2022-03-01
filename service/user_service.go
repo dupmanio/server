@@ -36,8 +36,8 @@ func (s UserService) Get(id uuid.UUID) (user model.User, err error) {
 	return user, s.repository.Joins("KeyPair").First(&user, id).Error
 }
 
-// CreateUser creates the user.
-func (s UserService) CreateUser(user *model.User) error {
+// Create creates the user.
+func (s UserService) Create(user *model.User) error {
 	return s.repository.Create(&user).Error
 }
 

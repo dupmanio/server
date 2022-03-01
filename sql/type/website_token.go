@@ -33,13 +33,23 @@ func (t *WebsiteToken) Decrypt(privateKey string) (decrypted string, err error) 
 	return encryptor.Decrypt(string(*t))
 }
 
+func (t *WebsiteToken) Encrypt(publicKey string) (encrypted string, err error) {
+	encryptor := helper.NewRSAEncryptor()
+	if err = encryptor.SetPublicKey(publicKey); err != nil {
+		return encrypted, err
+	}
+
+	if encrypted, err = encryptor.Encrypt(string(*t)); err == nil {
+		return encrypted, nil
+	}
+
+	return encrypted, err
+}
+
 func (t WebsiteToken) GormValue(ctx context.Context, tx *gorm.DB) (expr clause.Expr) {
 	if encryptionKey, ok := ctx.Value(constant.EncryptionKeyKey).(string); ok {
-		encryptor := helper.NewRSAEncryptor()
-		if err := encryptor.SetPublicKey(encryptionKey); err == nil {
-			if encrypted, err := encryptor.Encrypt(string(t)); err == nil {
-				return clause.Expr{SQL: "?", Vars: []interface{}{encrypted}}
-			}
+		if encrypted, err := t.Encrypt(encryptionKey); err == nil {
+			return clause.Expr{SQL: "?", Vars: []interface{}{encrypted}}
 		}
 	}
 

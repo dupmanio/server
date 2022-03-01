@@ -61,7 +61,7 @@ func (s UserSeeder) Up() {
 
 	for _, user := range users {
 		go func(u model.User) {
-			if err := s.userService.CreateUser(&u); err != nil {
+			if err := s.userService.Create(&u); err != nil {
 				s.logger.Error(err)
 			}
 		}(user)

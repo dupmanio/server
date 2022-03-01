@@ -25,4 +25,5 @@ const (
 	EmailIsTaken          = "Email is taken"
 	ValueIsNotURL         = "Value of field '%s' is not a valid URL address"
 	UnableToDecodeKey     = "unable to decode key"
+	HeaderIsMissing       = "Header '%s' is missing"
 )
