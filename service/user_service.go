@@ -33,7 +33,7 @@ func NewUserService(repository repository.UserRepository) UserService {
 
 // Get gets one user.
 func (s UserService) Get(id uuid.UUID) (user model.User, err error) {
-	return user, s.repository.Joins("KeyPair").First(&user, id).Error
+	return user, s.repository.Preload("Roles").Joins("KeyPair").First(&user, id).Error
 }
 
 // Create creates the user.
@@ -45,6 +45,7 @@ func (s UserService) Create(user *model.User) error {
 func (s UserService) GetByUsernameOrEmail(username string) (user model.User, err error) {
 	return user, s.repository.
 		Where("username = @username OR email = @username", sql.Named("username", username)).
+		Preload("Roles").
 		Joins("KeyPair").
 		First(&user).Error
 }

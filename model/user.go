@@ -27,6 +27,7 @@ type User struct {
 	Websites  []Website
 	KeyPairID uuid.UUID `gorm:"->;<-:create"`
 	KeyPair   KeyPair   `gorm:"->;<-:create"`
+	Roles     []Role    `gorm:"many2many:user_roles"`
 }
 
 func (e *User) BeforeCreate(tx *gorm.DB) (err error) {
@@ -38,5 +39,17 @@ func (e *User) BeforeCreate(tx *gorm.DB) (err error) {
 		PrivateKey: "tmp",
 	}
 
+	e.Roles = []Role{
+		{Name: "user"},
+	}
+
 	return err
+}
+
+func (e *User) GetRoles() (roles []string) {
+	for _, role := range e.Roles {
+		roles = append(roles, role.Name)
+	}
+
+	return roles
 }
