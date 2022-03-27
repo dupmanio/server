@@ -81,6 +81,8 @@ func (s HTTPService) CurrentUserID(ctx *gin.Context) uuid.UUID {
 // CurrentUser returns the current user.
 func (s HTTPService) CurrentUser(ctx *gin.Context) (user model.User, err error) {
 	if user, err = s.userService.Get(s.CurrentUserID(ctx)); err != nil {
+		user.Roles = []model.Role{{Name: "anonymous"}}
+
 		return user, err
 	}
 

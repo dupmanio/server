@@ -18,7 +18,7 @@ import (
 	"github.com/gin-contrib/cors"
 )
 
-const corsMAxAge = 12 * time.Hour
+const corsMaxAge = 12 * time.Hour
 
 // CorsMiddleware data type.
 type CorsMiddleware struct {
@@ -45,6 +45,6 @@ func (m CorsMiddleware) Setup() {
 		AllowMethods:     m.config.Methods,
 		AllowHeaders:     m.config.Headers,
 		AllowCredentials: true,
-		MaxAge:           corsMAxAge,
+		MaxAge:           corsMaxAge,
 	}))
 }

@@ -36,6 +36,8 @@ func NewRequestHandler(config Config, logger Logger) RequestHandler {
 
 	engine := gin.New()
 
+	engine.Use(gin.Recovery())
+
 	if err := engine.SetTrustedProxies(config.Server.TrustedProxies); err != nil {
 		log.Fatalln(err)
 	}

@@ -15,6 +15,7 @@ import (
 	"github.com/dupman/server/api/controller"
 	"github.com/dupman/server/api/middleware"
 	"github.com/dupman/server/lib"
+	"github.com/qor/roles"
 )
 
 // WebsiteRoutes data type.
@@ -22,17 +23,25 @@ type WebsiteRoutes struct {
 	handler           lib.RequestHandler
 	logger            lib.Logger
 	websiteController controller.WebsiteController
-	authMiddleware    middleware.JWTAuthMiddleware
+	rbacMiddleware    middleware.RBACMiddleware
 }
 
 // Setup sets up WebsiteRoutes.
 func (r WebsiteRoutes) Setup() {
 	r.logger.Debug("Setting up Website route")
 
-	group := r.handler.Gin.Group("/website").Use(r.authMiddleware.Handler())
+	group := r.handler.Gin.Group("/website")
 
-	group.GET("/", r.websiteController.All)
-	group.POST("/", r.websiteController.Create)
+	group.GET(
+		"/",
+		r.rbacMiddleware.Handler(roles.Allow(roles.Read, "user")),
+		r.websiteController.All,
+	)
+	group.POST(
+		"/",
+		r.rbacMiddleware.Handler(roles.Allow(roles.CRUD, "user")),
+		r.websiteController.Create,
+	)
 }
 
 // NewWebsiteRoutes creates WebsiteRoutes.
@@ -40,12 +49,12 @@ func NewWebsiteRoutes(
 	handler lib.RequestHandler,
 	logger lib.Logger,
 	websiteController controller.WebsiteController,
-	authMiddleware middleware.JWTAuthMiddleware,
+	rbacMiddleware middleware.RBACMiddleware,
 ) WebsiteRoutes {
 	return WebsiteRoutes{
 		handler:           handler,
 		logger:            logger,
 		websiteController: websiteController,
-		authMiddleware:    authMiddleware,
+		rbacMiddleware:    rbacMiddleware,
 	}
 }

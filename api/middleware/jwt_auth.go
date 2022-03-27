@@ -16,53 +16,59 @@ import (
 	"strings"
 
 	"github.com/dupman/server/constant"
+	"github.com/dupman/server/lib"
 	"github.com/dupman/server/model"
-	"github.com/dupman/server/resources"
 	"github.com/dupman/server/service"
 	"github.com/gin-gonic/gin"
 )
 
 // JWTAuthMiddleware data type.
 type JWTAuthMiddleware struct {
+	handler     lib.RequestHandler
+	logger      lib.Logger
 	httpService service.HTTPService
 	authService service.JWTAuthService
 }
 
 // NewJWTAuthMiddleware creates a new JWTAuthMiddleware.
-func NewJWTAuthMiddleware(httpService service.HTTPService, authService service.JWTAuthService) JWTAuthMiddleware {
+func NewJWTAuthMiddleware(
+	handler lib.RequestHandler,
+	logger lib.Logger,
+	httpService service.HTTPService,
+	authService service.JWTAuthService,
+) JWTAuthMiddleware {
 	return JWTAuthMiddleware{
+		handler:     handler,
+		logger:      logger,
 		httpService: httpService,
 		authService: authService,
 	}
 }
 
 // Setup sets up jwt auth middleware.
-func (m JWTAuthMiddleware) Setup() {}
+func (m JWTAuthMiddleware) Setup() {
+	m.logger.Debug("Setting up JWT Auth middleware")
+
+	m.handler.Gin.Use(m.Handler())
+}
 
 // Handler handles middleware functionality.
 func (m JWTAuthMiddleware) Handler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		var err error
+
+		var user model.User
+
 		token := strings.TrimPrefix(ctx.GetHeader("Authorization"), "Bearer ")
 		if token != "" {
-			var (
-				user model.User
-				err  error
-			)
-
 			if user, err = m.authService.Authorize(token); err != nil {
 				m.httpService.HTTPError(ctx, http.StatusUnauthorized, err.Error())
 				ctx.Abort()
 
 				return
 			}
-
-			ctx.Set(constant.UserIDKey, user.ID.String())
-			ctx.Next()
-
-			return
 		}
 
-		m.httpService.HTTPError(ctx, http.StatusUnauthorized, resources.AccessDenied)
-		ctx.Abort()
+		ctx.Set(constant.UserIDKey, user.ID.String())
 	}
 }

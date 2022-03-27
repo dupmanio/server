@@ -15,6 +15,7 @@ import (
 	"github.com/dupman/server/api/controller"
 	"github.com/dupman/server/api/middleware"
 	"github.com/dupman/server/lib"
+	"github.com/qor/roles"
 )
 
 // AccountRoutes data type.
@@ -22,16 +23,20 @@ type AccountRoutes struct {
 	handler           lib.RequestHandler
 	logger            lib.Logger
 	accountController controller.AccountController
-	authMiddleware    middleware.JWTAuthMiddleware
+	rbacMiddleware    middleware.RBACMiddleware
 }
 
 // Setup sets up AccountRoutes.
 func (r AccountRoutes) Setup() {
 	r.logger.Debug("Setting up Account route")
 
-	group := r.handler.Gin.Group("/account").Use(r.authMiddleware.Handler())
+	group := r.handler.Gin.Group("/account")
 
-	group.GET("/", r.accountController.GetCurrentAccount)
+	group.GET(
+		"/",
+		r.rbacMiddleware.Handler(roles.Allow(roles.Read, "user")),
+		r.accountController.GetCurrentAccount,
+	)
 }
 
 // NewAccountRoutes creates AccountRoutes.
@@ -39,12 +44,12 @@ func NewAccountRoutes(
 	handler lib.RequestHandler,
 	logger lib.Logger,
 	accountController controller.AccountController,
-	authMiddleware middleware.JWTAuthMiddleware,
+	rbacMiddleware middleware.RBACMiddleware,
 ) AccountRoutes {
 	return AccountRoutes{
 		handler:           handler,
 		logger:            logger,
 		accountController: accountController,
-		authMiddleware:    authMiddleware,
+		rbacMiddleware:    rbacMiddleware,
 	}
 }
