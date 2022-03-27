@@ -103,18 +103,16 @@ func bootstrapWrapper(t *testing.T, testSuite suite.TestingSuite) func(
 		validators validator.Validators,
 		seeders seeder.Seeders,
 	) {
-		go func() {
-			middlewares.Setup()
-			routes.Setup()
-			repositories.Setup()
-			validators.Setup()
+		middlewares.Setup()
+		routes.Setup()
+		repositories.Setup()
+		validators.Setup()
 
-			testerSetup = TesterSetup{
-				handler: handler.Gin,
-				Seeders: seeders,
-			}
+		testerSetup = TesterSetup{
+			handler: handler.Gin,
+			Seeders: seeders,
+		}
 
-			suite.Run(t, testSuite)
-		}()
+		suite.Run(t, testSuite)
 	}
 }
