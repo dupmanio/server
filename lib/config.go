@@ -12,13 +12,9 @@
 package lib
 
 import (
-	"path"
-	"path/filepath"
-	"runtime"
 	"time"
 
-	"github.com/mcuadros/go-defaults"
-	"github.com/spf13/viper"
+	"github.com/dupman/config"
 )
 
 // ServerConfig represents Server config.
@@ -62,21 +58,7 @@ type Config struct {
 
 // NewConfig creates a new Config.
 func NewConfig() (conf Config) {
-	configPath := "."
-	if _, b, _, ok := runtime.Caller(0); ok {
-		configPath = filepath.Dir(path.Join(path.Dir(b)))
-	}
-
-	viper.SetConfigName(".env")
-	viper.SetConfigType("env")
-	viper.AddConfigPath(configPath)
-	viper.AllowEmptyEnv(true)
-	viper.AutomaticEnv()
-
-	defaults.SetDefaults(&conf)
-
-	_ = viper.ReadInConfig()
-	_ = viper.Unmarshal(&conf)
+	config.Load(".", &conf)
 
 	return conf
 }

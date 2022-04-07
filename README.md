@@ -29,8 +29,8 @@
     <a href="https://codecov.io/gh/dupman/server">
         <img alt="codecov" src="https://codecov.io/gh/dupman/server/branch/main/graph/badge.svg?token=5A88MBXGTU">
     </a>
-    <a href="https://goreportcard.com/report/github.com/gotify/server">
-        <img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/gotify/server">
+    <a href="https://goreportcard.com/report/github.com/dupman/encryptor">
+        <img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/dupman/encryptor">
     </a>
 </p>
 

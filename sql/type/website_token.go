@@ -14,8 +14,8 @@ package sqltype
 import (
 	"context"
 
+	"github.com/dupman/encryptor"
 	"github.com/dupman/server/constant"
-	"github.com/dupman/server/helper"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -23,23 +23,23 @@ import (
 type WebsiteToken string
 
 func (t *WebsiteToken) Decrypt(privateKey string) (decrypted string, err error) {
-	encryptor := helper.NewRSAEncryptor()
+	rsaEncryptor := encryptor.NewRSAEncryptor()
 
-	err = encryptor.SetPrivateKey(privateKey)
+	err = rsaEncryptor.SetPrivateKey(privateKey)
 	if err != nil {
 		return decrypted, err
 	}
 
-	return encryptor.Decrypt(string(*t))
+	return rsaEncryptor.Decrypt(string(*t))
 }
 
 func (t *WebsiteToken) Encrypt(publicKey string) (encrypted string, err error) {
-	encryptor := helper.NewRSAEncryptor()
-	if err = encryptor.SetPublicKey(publicKey); err != nil {
+	rsaEncryptor := encryptor.NewRSAEncryptor()
+	if err = rsaEncryptor.SetPublicKey(publicKey); err != nil {
 		return encrypted, err
 	}
 
-	if encrypted, err = encryptor.Encrypt(string(*t)); err == nil {
+	if encrypted, err = rsaEncryptor.Encrypt(string(*t)); err == nil {
 		return encrypted, nil
 	}
 

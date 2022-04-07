@@ -12,7 +12,7 @@
 package model
 
 import (
-	"github.com/dupman/server/helper"
+	"github.com/dupman/encryptor"
 	"gorm.io/gorm"
 )
 
@@ -27,10 +27,10 @@ func (e *KeyPair) BeforeCreate(tx *gorm.DB) (err error) {
 		return err
 	}
 
-	encryptor := helper.NewRSAEncryptor()
-	if err = encryptor.GenerateKeyPair(); err == nil {
-		e.PrivateKey = encryptor.PrivateKey()
-		e.PublicKey, err = encryptor.PublicKey()
+	rsaEncryptor := encryptor.NewRSAEncryptor()
+	if err = rsaEncryptor.GenerateKeyPair(); err == nil {
+		e.PrivateKey = rsaEncryptor.PrivateKey()
+		e.PublicKey, err = rsaEncryptor.PublicKey()
 	}
 
 	return err
